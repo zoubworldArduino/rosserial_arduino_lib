@@ -361,7 +361,7 @@ namespace ros {
               }else if(topic_ == TopicInfo::ID_TX_STOP){
                   configured_ = false;
               }else{
-                if ((topic_-100>MAX_SUBSCRIBERS) || ((topic_>ID_TX_STOP)&&(topic_<100)))
+                if ((topic_-100>MAX_SUBSCRIBERS) || ((topic_>TopicInfo::ID_TX_STOP)&&(topic_<100)))
 				{
                // debug(   logerror( "bad topic_ value" ))
 				}
