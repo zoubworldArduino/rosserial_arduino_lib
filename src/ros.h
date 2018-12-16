@@ -149,7 +149,7 @@ namespace ros
 
 #elif defined(BOARD_ID_Captor)
   #include <ZRos.h> // refers to git@github.com:zoubworldArduino/ZRos.git 
-  typedef NodeHandle_<ArduinoHardwareSerial, 24, 24, 128, 128> NodeHandle;
+  typedef NodeHandle_<ArduinoHardwareSerial, 30, 30, 128, 128> NodeHandle;
 #else
   typedef NodeHandle_<ArduinoHardware, 25, 25, 512, 512, FlashReadOutBuffer_> NodeHandle;
 

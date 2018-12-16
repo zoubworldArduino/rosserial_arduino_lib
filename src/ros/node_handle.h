@@ -65,7 +65,7 @@
 #define MODE_MESSAGE        7
 #define MODE_MSG_CHECKSUM   8   // checksum for msg and topic id
 
-#define debug(a) {}
+#define debug(a) {a;}
 #define MSG_TIMEOUT 20  //20 milliseconds to recieve all of message data
 
 #include "ros/msg.h"
@@ -251,6 +251,7 @@ namespace ros {
         uint32_t c_time = hardware_.time();
         if( (c_time - last_sync_receive_time) > (SYNC_SECONDS*2200) ){
             configured_ = false;
+            last_sync_receive_time=c_time;
             {
           debug(      logerror( "msg timeout unconfigured" ));
             }
@@ -262,7 +263,7 @@ namespace ros {
             mode_ = MODE_FIRST_FF;
             last_msg_timeout_time = c_time + MSG_TIMEOUT;
             {
-             // (  logerror( "msg timeout MODE_FIRST_FF" ));
+              debug(  logerror( "msg timeout MODE_FIRST_FF" ));
             }
           }
           
@@ -279,10 +280,10 @@ namespace ros {
           if( mode_ == MODE_MESSAGE ){        /* message data being recieved */
             
             message_in[index_++] = data;
-         /*   if (index_>=INPUT_SIZE)
+            if (index_>=INPUT_SIZE)
             {
-            (    logerror( "msg length overflow" ));
-            }*/
+            debug(    logerror( "msg length overflow" ));
+            }
             bytes_--;
             if(bytes_ == 0)                  /* is message complete? if so, checksum */
               mode_ = MODE_MSG_CHECKSUM;
@@ -294,7 +295,7 @@ namespace ros {
             else if( hardware_.time() - c_time > (SYNC_SECONDS)){
               /* We have been stuck in spinOnce too long, return error */
               configured_=false;
-              // (  logerror( "We have been stuck in spinOnce too long, return error" ));
+               debug(  logerror( "We have been stuck in spinOnce too long, return error" ));
               return -2;
             }
           }else if( mode_ == MODE_PROTOCOL_VER ){
@@ -314,7 +315,7 @@ namespace ros {
             bytes_ += data<<8;
             if (bytes_>INPUT_SIZE)
             {
-             // logerror( "msg length ERROR" );
+            debug(  logerror( "msg length ERROR" ));
 			  last_msg_timeout_time = c_time + MSG_TIMEOUT;
               if(data!=0xff)
               	mode_ = MODE_FIRST_FF;//try to resync
@@ -333,7 +334,7 @@ namespace ros {
             {
 				last_msg_timeout_time = c_time + MSG_TIMEOUT;
 	      		mode_ = MODE_FIRST_FF;          /* Abandon the frame if the msg len is wrong */
-            // ( logerror( "msg Abandon the frame if the msg len is wrong" ));
+             debug( logerror( "msg Abandon the frame is the msg len is wrong" ));
             }
 	  }else if( mode_ == MODE_TOPIC_L ){  /* bottom half of topic id */
             topic_ = data;
@@ -363,7 +364,7 @@ namespace ros {
               }else{
                 if ((topic_-100>MAX_SUBSCRIBERS) || ((topic_>TopicInfo::ID_TX_STOP)&&(topic_<100)))
 				{
-               // debug(   logerror( "bad topic_ value" ))
+                   debug(logerror( "bad topic_ value" ));
 				}
                 else
                 if(subscribers[topic_-100])
@@ -372,12 +373,12 @@ namespace ros {
             }
             else
             {
-                //  (logerror( "checksum_ ERROR" ));
+                  debug(logerror( "checksum_ ERROR" ));
 	    
             }
           }else
             {
-             //  (logerror( "mode unsuported ERROR" ));
+               debug(logerror( "mode unsuported ERROR" ));
 	    
             }
         }
